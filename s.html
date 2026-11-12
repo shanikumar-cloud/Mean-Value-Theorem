@@ -1,0 +1,603 @@
+html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lagrange's Mean Value Theorem (LMVT) - Interactive Visualizer</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            --card-bg: #ffffff;
+            --accent-blue: #0284c7;
+            --accent-purple: #7c3aed;
+            --accent-green: #16a34a;
+            --accent-orange: #ea580c;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1050px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            padding: 25px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            background: linear-gradient(to right, #0284c7, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Formula Card */
+        .formula-box {
+            background: linear-gradient(135deg, #f0f9ff, #faf5ff);
+            border: 1px solid #bae6fd;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+        }
+
+        .formula-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .math-formula {
+            font-size: 1.6rem;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            background: #ffffff;
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .conditions {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Main Grid: Controls + Solution & Graph */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.25fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 850px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 16px;
+            color: var(--accent-blue);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* Controls */
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            color: #0f172a;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--accent-blue);
+            background: #ffffff;
+        }
+
+        .interval-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, opacity 0.2s;
+            font-size: 0.95rem;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #0284c7, #2563eb);
+            color: #ffffff;
+        }
+
+        .btn-animate {
+            background: linear-gradient(to right, #7c3aed, #db2777);
+            color: #ffffff;
+        }
+
+        /* Step-by-step Solution Box */
+        .solution-steps {
+            margin-top: 18px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--accent-green);
+            font-size: 0.95rem;
+            line-height: 1.65;
+            color: #1e293b;
+        }
+
+        .step {
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+
+        .step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .step-title {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        .highlight-val {
+            color: #b45309;
+            background: #fef3c7;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1.05rem;
+        }
+
+        /* Graph Area */
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 400px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 14px;
+            font-size: 0.85rem;
+            justify-content: center;
+            color: #334155;
+            font-weight: 500;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Title -->
+    <header>
+        <h1> Mean Value Theorem</h1>
+        <p>Mathematical Formula, Step-by-Step Analytical Solution, and Interactive Graphical Proof</p>
+    </header>
+
+    <!-- Formula Section -->
+    <div class="formula-box">
+        <div class="formula-title">Main Theorem Formula</div>
+        <div class="math-formula">
+            f'(c) = <span style="display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; font-size:1.25rem;">
+                <span style="border-bottom:1.5px solid #0f172a; padding:0 6px;">f(b) − f(a)</span>
+                <span style="padding:0 6px;">b − a</span>
+            </span>
+        </div>
+        <div class="conditions">
+            <strong>Conditions:</strong> If a function <em>f(x)</em> is <strong>continuous</strong> on the closed interval <strong>[a, b]</strong> and <strong>differentiable</strong> on the open interval <strong>(a, b)</strong>, then there exists at least one point <strong>c ∈ (a, b)</strong> where the tangent line is parallel to the secant line connecting (a, f(a)) and (b, f(b)).
+        </div>
+    </div>
+
+    <!-- Solution & Graph Grid -->
+    <div class="main-grid">
+        <!-- Left: Controls & Step-by-Step Solution -->
+        <div class="card">
+            <h2>1. Problem &amp; Step-by-Step Solution</h2>
+            
+            <div class="control-group">
+                <label for="funcSelect">Select Function f(x):</label>
+                <select id="funcSelect" onchange="calculateAndDraw()">
+                    <option value="quad">f(x) = x² − 4x + 5 (Quadratic Function)</option>
+                    <option value="cubic">f(x) = x³ − 3x + 2 (Cubic Function)</option>
+                    <option value="simple">f(x) = x² (Simple Parabola)</option>
+                </select>
+            </div>
+
+            <div class="interval-inputs">
+                <div class="control-group">
+                    <label for="valA">Start Point (a):</label>
+                    <input type="number" id="valA" value="1" step="0.5" onchange="calculateAndDraw()">
+                </div>
+                <div class="control-group">
+                    <label for="valB">End Point (b):</label>
+                    <input type="number" id="valB" value="4" step="0.5" onchange="calculateAndDraw()">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-primary" onclick="calculateAndDraw()">Solve</button>
+                <button class="btn-animate" onclick="animateTangent()">Animate Tangent ▶</button>
+            </div>
+
+            <!-- Dynamic Step-by-Step Solution Output -->
+            <div class="solution-steps" id="solutionOutput">
+                <!-- JavaScript will populate exact steps here -->
+            </div>
+        </div>
+
+        <!-- Right: Interactive Graph -->
+        <div class="card">
+            <h2>2. Graphical Representation</h2>
+            <div class="canvas-container">
+                <canvas id="mvtCanvas" width="550" height="400"></canvas>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><span class="dot" style="background:#0284c7;"></span> Curve f(x)</div>
+                <div class="legend-item"><span class="dot" style="background:#ea580c;"></span> Secant Line AB</div>
+                <div class="legend-item"><span class="dot" style="background:#16a34a;"></span> Tangent at c</div>
+                <div class="legend-item"><span class="dot" style="background:#eab308;"></span> Point c</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('mvtCanvas');
+    const ctx = canvas.getContext('2d');
+    let animId = null;
+
+    // Function definitions
+    const functions = {
+        quad: {
+            name: "f(x) = x² − 4x + 5",
+            derivName: "f'(x) = 2x − 4",
+            f: (x) => x * x - 4 * x + 5,
+            df: (x) => 2 * x - 4,
+            solveC: (slope, a, b) => [(slope + 4) / 2]
+        },
+        cubic: {
+            name: "f(x) = x³ − 3x + 2",
+            derivName: "f'(x) = 3x² − 3",
+            f: (x) => x * x * x - 3 * x + 2,
+            df: (x) => 3 * x * x - 3,
+            solveC: (slope, a, b) => {
+                let val = (slope + 3) / 3;
+                if (val < 0) return [];
+                let r = Math.sqrt(val);
+                return [-r, r].filter(c => c > a && c < b);
+            }
+        },
+        simple: {
+            name: "f(x) = x²",
+            derivName: "f'(x) = 2x",
+            f: (x) => x * x,
+            df: (x) => 2 * x,
+            solveC: (slope, a, b) => [slope / 2]
+        }
+    };
+
+    function calculateAndDraw(customSweepX = null) {
+        if (customSweepX === null && animId) {
+            cancelAnimationFrame(animId);
+            animId = null;
+        }
+
+        const type = document.getElementById('funcSelect').value;
+        const a = parseFloat(document.getElementById('valA').value);
+        const b = parseFloat(document.getElementById('valB').value);
+        const solBox = document.getElementById('solutionOutput');
+
+        if (isNaN(a) || isNaN(b) || a >= b) {
+            solBox.innerHTML = `<span style="color:#dc2626;">⚠️ Error: Please ensure that <strong>a &lt; b</strong>.</span>`;
+            return;
+        }
+
+        const fnObj = functions[type];
+        const fa = fnObj.f(a);
+        const fb = fnObj.f(b);
+        const secantSlope = (fb - fa) / (b - a);
+        const cValues = fnObj.solveC(secantSlope, a, b).filter(c => c > a && c < b);
+        const c = cValues.length > 0 ? cValues[0] : null;
+
+        // Render Step-by-Step Solution
+        solBox.innerHTML = `
+            <div class="step">
+                <span class="step-title">Step 1 (Function &amp; Interval):</span><br>
+                ${fnObj.name} is continuous on [${a}, ${b}] and differentiable on (${a}, ${b}).
+            </div>
+            <div class="step">
+                <span class="step-title">Step 2 (Evaluate f(a) and f(b)):</span><br>
+                f(${a}) = <strong>${fa.toFixed(2)}</strong> &nbsp;|&nbsp; f(${b}) = <strong>${fb.toFixed(2)}</strong>
+            </div>
+            <div class="step">
+                <span class="step-title">Step 3 (Slope of Secant Line):</span><br>
+                f'(c) = [f(${b}) − f(${a})] / (${b} − ${a}) = (${fb.toFixed(2)} − ${fa.toFixed(2)}) / ${(b - a).toFixed(2)} = <span class="highlight-val">${secantSlope.toFixed(2)}</span>
+            </div>
+            <div class="step">
+                <span class="step-title">Step 4 (Find Value of c):</span><br>
+                Differentiating: ${fnObj.derivName}<br>
+                ${c !== null 
+                    ? `Setting f'(c) = ${secantSlope.toFixed(2)}, we get <span class="highlight-val">c = ${c.toFixed(3)}</span> ∈ (${a}, ${b}).` 
+                    : `<span style="color:#dc2626;">No real value of c found within this interval.</span>`}
+            </div>
+        `;
+
+        drawGraph(fnObj, a, b, fa, fb, secantSlope, c, customSweepX);
+    }
+
+    function drawGraph(fnObj, a, b, fa, fb, secantSlope, c, sweepX) {
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        // Fill white canvas background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+
+        // Determine coordinate bounds dynamically
+        const padX = Math.max(1.5, (b - a) * 0.4);
+        const minX = a - padX;
+        const maxX = b + padX;
+
+        let minY = Math.min(fa, fb, 0);
+        let maxY = Math.max(fa, fb, 0);
+        for (let x = minX; x <= maxX; x += (maxX - minX) / 100) {
+            let y = fnObj.f(x);
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+        }
+        const padY = Math.max(2, (maxY - minY) * 0.25);
+        minY -= padY;
+        maxY += padY;
+
+        const toPxX = (x) => ((x - minX) / (maxX - minX)) * w;
+        const toPxY = (y) => h - ((y - minY) / (maxY - minY)) * h;
+
+        // Draw Light Grid
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        for (let gx = Math.ceil(minX); gx <= Math.floor(maxX); gx++) {
+            ctx.beginPath();
+            ctx.moveTo(toPxX(gx), 0);
+            ctx.lineTo(toPxX(gx), h);
+            ctx.stroke();
+        }
+        for (let gy = Math.ceil(minY); gy <= Math.floor(maxY); gy++) {
+            ctx.beginPath();
+            ctx.moveTo(0, toPxY(gy));
+            ctx.lineTo(w, toPxY(gy));
+            ctx.stroke();
+        }
+
+        // Draw Axes (X=0, Y=0)
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.5;
+        if (minY <= 0 && maxY >= 0) {
+            ctx.beginPath();
+            ctx.moveTo(0, toPxY(0));
+            ctx.lineTo(w, toPxY(0));
+            ctx.stroke();
+        }
+        if (minX <= 0 && maxX >= 0) {
+            ctx.beginPath();
+            ctx.moveTo(toPxX(0), 0);
+            ctx.lineTo(toPxX(0), h);
+            ctx.stroke();
+        }
+
+        // Draw Function Curve f(x)
+        ctx.strokeStyle = '#0284c7';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (let px = 0; px <= w; px += 2) {
+            let x = minX + (px / w) * (maxX - minX);
+            let y = fnObj.f(x);
+            if (px === 0) ctx.moveTo(px, toPxY(y));
+            else ctx.lineTo(px, toPxY(y));
+        }
+        ctx.stroke();
+
+        // Draw Secant Line (Orange)
+        ctx.strokeStyle = '#ea580c';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        let secY1 = fa + secantSlope * (minX - a);
+        let secY2 = fa + secantSlope * (maxX - a);
+        ctx.moveTo(toPxX(minX), toPxY(secY1));
+        ctx.lineTo(toPxX(maxX), toPxY(secY2));
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw Tangent Line (either animated sweepX or exact c)
+        const activeX = sweepX !== null ? sweepX : c;
+        if (activeX !== null) {
+            const activeY = fnObj.f(activeX);
+            const activeSlope = fnObj.df(activeX);
+            const isMatched = Math.abs(activeSlope - secantSlope) < 0.05;
+
+            ctx.strokeStyle = isMatched ? '#16a34a' : '#7c3aed';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            let tanSpan = (b - a) * 0.65;
+            let tx1 = activeX - tanSpan;
+            let ty1 = activeY + activeSlope * (tx1 - activeX);
+            let tx2 = activeX + tanSpan;
+            let ty2 = activeY + activeSlope * (tx2 - activeX);
+            ctx.moveTo(toPxX(tx1), toPxY(ty1));
+            ctx.lineTo(toPxX(tx2), toPxY(ty2));
+            ctx.stroke();
+
+            // Draw dashed vertical drop line for c
+            ctx.strokeStyle = '#ca8a04';
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(toPxX(activeX), toPxY(activeY));
+            ctx.lineTo(toPxX(activeX), toPxY(0));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Point C marker
+            drawPoint(toPxX(activeX), toPxY(activeY), '#eab308', `c = ${activeX.toFixed(2)}`);
+        }
+
+        // Points A and B
+        drawPoint(toPxX(a), toPxY(fa), '#ea580c', `A(${a}, ${fa.toFixed(1)})`);
+        drawPoint(toPxX(b), toPxY(fb), '#ea580c', `B(${b}, ${fb.toFixed(1)})`);
+    }
+
+    function drawPoint(px, py, color, label) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText(label, px + 8, py - 8);
+    }
+
+    function animateTangent() {
+        if (animId) cancelAnimationFrame(animId);
+        const a = parseFloat(document.getElementById('valA').value);
+        const b = parseFloat(document.getElementById('valB').value);
+        if (isNaN(a) || isNaN(b) || a >= b) return;
+
+        let currentX = a;
+        const step = (b - a) / 140;
+
+        function frame() {
+            currentX += step;
+            if (currentX >= b) {
+                calculateAndDraw(null); // Snap to exact solution c
+                return;
+            }
+            calculateAndDraw(currentX);
+            animId = requestAnimationFrame(frame);
+        }
+        animId = requestAnimationFrame(frame);
+    }
+
+    // Initial render
+    window.onload = () => calculateAndDraw();
+</script>
+
+</body>
+</html>
